@@ -2,10 +2,9 @@ package main
 
 import (
 	"flag"
-	"path/filepath"
 	"os/user"
+	"path/filepath"
 	//"fmt"
-	//"github.com/madcowfred/yencode"
 	"code.google.com/p/gcfg"
 	"github.com/op/go-logging"
 )
@@ -22,18 +21,18 @@ var log = logging.MustGetLogger("gopoststuff")
 // Config
 var Config struct {
 	Global struct {
-		From string
+		From         string
 		DefaultGroup string
-		ArticleSize int32
+		ArticleSize  int32
 	}
 
 	Server map[string]*struct {
-		Address string
-		Port uint16
-		Username string
-		Password string
+		Address     string
+		Port        uint16
+		Username    string
+		Password    string
 		Connections uint8
-		TLS bool
+		TLS         bool
 	}
 }
 
