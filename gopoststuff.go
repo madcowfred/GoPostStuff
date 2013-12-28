@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"os"
 	"os/user"
 	"path/filepath"
 	//"fmt"
@@ -62,6 +63,23 @@ func main() {
 		log.Fatal("Need to specify -d or -s option, try --help!")
 	}
 
+	// Check arguments
+	if len(flag.Args()) == 0 {
+		log.Fatal("no filenames provided")
+	}
+
+	for _, arg := range flag.Args() {
+		st, err := os.Stat(arg)
+		if err != nil {
+			log.Fatalf("stat %s: %s", arg, err)
+		}
+
+		// If -d was specified, make sure that it's a directory
+		if *dirSubjectFlag && !st.IsDir() {
+			log.Fatalf("-d option used but not a directory: %s", arg)
+		}
+	}
+
 	// Load config file
 	var cfgFile string
 	if len(*configFlag) > 0 {
@@ -80,27 +98,19 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// log.Debug("Config.Global: %+v", Config.Global)
-	// for n, s := range Config.Server {
-	//	 log.Debug("Config.Server %s: %+v", n, s)
+	// Find some files
+
+	// mc := NewMmapCache()
+	// md, err := mc.MapFile("gopoststuff.go", 1)
+	// if err != nil {
+	// 	log.Fatal(err)
 	// }
 
-	// Initialise connections
-	// for name, server := range Config.Server {
+	// log.Info("%s", md.data[0:4])
 
+	// md.Decrement()
+	// err = mc.CloseFile("gopoststuff.go")
+	// if err != nil {
+	// 	log.Fatal(err)
 	// }
-
-	mc := NewMmapCache()
-	md, err := mc.MapFile("gopoststuff.go", 1)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	log.Info("%s", md.data[0:4])
-
-	md.Decrement()
-	err = mc.CloseFile("gopoststuff.go")
-	if err != nil {
-		log.Fatal(err)
-	}
 }
