@@ -29,10 +29,10 @@ var Config struct {
 
 	Server map[string]*struct {
 		Address     string
-		Port        uint16
+		Port        int
 		Username    string
 		Password    string
-		Connections uint8
+		Connections int
 		TLS         bool
 	}
 }
@@ -52,22 +52,17 @@ func main() {
 
 	log.Info("gopoststuff starting...")
 
-	// fmt.Printf("Verbose: %v\n", *verboseFlag)
-	// fmt.Printf("Config: %v\n", *configFlag)
-	// fmt.Printf("Subject: %s\n", *subjectFlag)
-	// fmt.Printf("DirSubject: %v\n", *dirSubjectFlag)
-	// fmt.Printf("Remaining args: %v\n", flag.Args())
-
 	// Make sure -d or -s was specified
 	if len(*subjectFlag) == 0 && !*dirSubjectFlag {
-		log.Fatal("Need to specify -d or -s option, try --help!")
+		log.Fatal("Need to specify -d or -s option, try gopoststuff --help")
 	}
 
 	// Check arguments
 	if len(flag.Args()) == 0 {
-		log.Fatal("no filenames provided")
+		log.Fatal("No filenames provided")
 	}
 
+	// Check that all supplied arguments exist
 	for _, arg := range flag.Args() {
 		st, err := os.Stat(arg)
 		if err != nil {
@@ -93,6 +88,8 @@ func main() {
 		cfgFile = filepath.Join(u.HomeDir, ".gopoststuff.conf")
 	}
 
+	log.Debug("Reading config from %s", cfgFile)
+
 	err := gcfg.ReadFileInto(&Config, cfgFile)
 	if err != nil {
 		log.Fatal(err)
@@ -113,4 +110,6 @@ func main() {
 	// if err != nil {
 	// 	log.Fatal(err)
 	// }
+
+	Spawner()
 }
