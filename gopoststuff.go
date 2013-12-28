@@ -89,4 +89,18 @@ func main() {
 	// for name, server := range Config.Server {
 
 	// }
+
+	mc := NewMmapCache()
+	md, err := mc.MapFile("gopoststuff.go", 1)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Info("%s", md.data[0:4])
+
+	md.Decrement()
+	err = mc.CloseFile("gopoststuff.go")
+	if err != nil {
+		log.Fatal(err)
+	}
 }
