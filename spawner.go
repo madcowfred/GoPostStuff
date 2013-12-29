@@ -5,11 +5,18 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
+	"time"
 )
 
 type FileData struct {
 	path string
 	size int64
+}
+
+type Totals struct {
+	start time.Time
+	end   time.Time
+	bytes int64
 }
 
 func Spawner(filenames []string) {
@@ -19,10 +26,10 @@ func Spawner(filenames []string) {
 	log.Debug("Spawner started")
 
 	// Walk any directories and collect files
-	for _, filename := range filenames {
+	for _ , filename := range filenames {
 		err := filepath.Walk(filename, func(path string, fi os.FileInfo, err error) error {
 			if !fi.IsDir() && fi.Size() > 0 {
-				files = append(files, FileData{path: path, size: fi.Size()})
+				files = append(files, FileData{ path: path, size: fi.Size() })
 			}
 			return err
 		})
@@ -38,14 +45,17 @@ func Spawner(filenames []string) {
 		log.Info("[%s] Starting %d connections", name, server.Connections)
 
 		// Make a channel to stuff Articles into
-		c := make(chan *Article, server.Connections)
+		achan := make(chan *Article, server.Connections)
+
+		// Make a channel to stuff Totals into
+		tchan := make(chan *Totals, server.Connections)
 
 		// Start a goroutine to generate articles
 		wg.Add(1)
 		go func(c chan *Article, files []FileData) {
-			log.Debug("[%s] Article generator started", name)
-
 			defer wg.Done()
+
+			log.Debug("[%s] Article generator started", name)
 
 			mc := NewMmapCache()
 
@@ -67,21 +77,28 @@ func Spawner(filenames []string) {
 				// Build some articles
 				for partnum := int64(0); partnum < parts; partnum++ {
 					start := partnum * Config.Global.ArticleSize
-					end := min((partnum+1)*Config.Global.ArticleSize, fd.size)
+					end := min((partnum + 1) * Config.Global.ArticleSize, fd.size)
 
 					ad := &ArticleData{
-						PartNum:   partnum + 1,
+						PartNum: partnum + 1,
 						PartTotal: parts,
-						PartSize:  end - start,
+						PartSize: end - start,
 						PartBegin: start,
-						PartEnd:   end,
-						FileNum:   filenum + 1,
+						PartEnd: end,
+						FileNum: filenum + 1,
 						FileTotal: len(files),
-						FileSize:  fd.size,
-						FileName:  fd.path,
+						FileSize: fd.size,
+						FileName: filepath.Base(fd.path),
 					}
 
-					a := NewArticle(md.data[start:end], ad, "test")
+					var subject string
+					if *dirSubjectFlag {
+						subject = filepath.Base(filepath.Dir(fd.path))
+					} else {
+						subject = *subjectFlag
+					}
+
+					a := NewArticle(md.data[start:end], ad, subject)
 					c <- a
 
 					//log.Debug("%s %d = %d -> %d", fd.path, i, start, end)
@@ -97,7 +114,7 @@ func Spawner(filenames []string) {
 			}
 
 			close(c)
-		}(c, files)
+		}(achan, files)
 
 		// Start a goroutine for each individual connection
 		for i := 0; i < server.Connections; i++ {
@@ -105,7 +122,7 @@ func Spawner(filenames []string) {
 
 			// Increment the WaitGroup counter
 			wg.Add(1)
-			go func(c chan *Article) {
+			go func(achan chan *Article, tchan chan *Totals) {
 				// Decrement the counter when the goroutine completes
 				defer wg.Done()
 
@@ -127,10 +144,25 @@ func Spawner(filenames []string) {
 					log.Debug("[%s:%02d] Authenticated", name, connID)
 				}
 
+				t := Totals{ start: time.Now() }
+
 				// Begin consuming
-				for _ = range c {
-					log.Info("[%s:%02d] Got an article!", name, connID)
+				for article := range achan {
+					log.Debug("[%s:%02d] Article: %p", name, connID, article)
+					err := conn.Post(article.Body)
+					if err != nil {
+						log.Warning("[%s:%02d] Post error: %s", name, connID, err)
+					}
+
+					t.bytes += int64(len(article.Body))
 				}
+
+				t.end = time.Now()
+				tchan <- &t
+
+				dur := t.end.Sub(t.start)
+				speed := float64(t.bytes) / dur.Seconds() / 1024
+				log.Info("[%s:%02d] Posted %d bytes in %s at %.1fKB/s", name, connID, t.bytes, dur.String(), speed)
 
 				// Close the connection
 				log.Debug("[%s:%02d] Closing connection", name, connID)
@@ -138,7 +170,7 @@ func Spawner(filenames []string) {
 				if err != nil {
 					log.Warning("[%s:%02d] Error while closing connection: %s", name, connID, err)
 				}
-			}(c)
+			}(achan, tchan)
 		}
 	}
 
