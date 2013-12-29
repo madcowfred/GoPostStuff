@@ -1,3 +1,6 @@
+// Copyright (c) 2009 The Go Authors. All rights reserved.
+// See the LICENSE file.
+
 package simplenntp
 
 import (
@@ -17,20 +20,19 @@ var timeout = time.Duration(20) * time.Second
 // A ProtocolError represents responses from an NNTP server
 // that seem incorrect for NNTP.
 type ProtocolError string
-
 func (p ProtocolError) Error() string {
-	return string(p)
+        return string(p)
 }
 
 // An Error represents an error response from an NNTP server.
 type Error struct {
-	Code uint
-	Msg  string
+        Code uint
+        Msg  string
+}
+func (e Error) Error() string {
+        return fmt.Sprintf("%03d %s", e.Code, e.Msg)
 }
 
-func (e Error) Error() string {
-	return fmt.Sprintf("%03d %s", e.Code, e.Msg)
-}
 
 type Conn struct {
 	conn  io.WriteCloser
@@ -79,6 +81,7 @@ func DialTLS(address string, port int) (*Conn, error) {
 	if err != nil {
 		return nil, err
 	}
+
 
 	return newConn(conn)
 }
