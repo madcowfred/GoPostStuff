@@ -15,10 +15,10 @@ Features
 
 Requirements
 ------------
-* A working [Go installation] [1]
+* A working [Go installation] [2]
 * A Usenet server that allows posting
 
-  [1]: http://golang.org/doc/install  "Getting Started - The Go Programming Language"
+  [2]: http://golang.org/doc/install  "Getting Started - The Go Programming Language"
 
 Installation
 ------------
