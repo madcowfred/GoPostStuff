@@ -26,10 +26,10 @@ func Spawner(filenames []string) {
 	log.Debug("Spawner started")
 
 	// Walk any directories and collect files
-	for _ , filename := range filenames {
+	for _, filename := range filenames {
 		err := filepath.Walk(filename, func(path string, fi os.FileInfo, err error) error {
 			if !fi.IsDir() && fi.Size() > 0 {
-				files = append(files, FileData{ path: path, size: fi.Size() })
+				files = append(files, FileData{path: path, size: fi.Size()})
 			}
 			return err
 		})
@@ -77,18 +77,18 @@ func Spawner(filenames []string) {
 				// Build some articles
 				for partnum := int64(0); partnum < parts; partnum++ {
 					start := partnum * Config.Global.ArticleSize
-					end := min((partnum + 1) * Config.Global.ArticleSize, fd.size)
+					end := min((partnum+1)*Config.Global.ArticleSize, fd.size)
 
 					ad := &ArticleData{
-						PartNum: partnum + 1,
+						PartNum:   partnum + 1,
 						PartTotal: parts,
-						PartSize: end - start,
+						PartSize:  end - start,
 						PartBegin: start,
-						PartEnd: end,
-						FileNum: filenum + 1,
+						PartEnd:   end,
+						FileNum:   filenum + 1,
 						FileTotal: len(files),
-						FileSize: fd.size,
-						FileName: filepath.Base(fd.path),
+						FileSize:  fd.size,
+						FileName:  filepath.Base(fd.path),
 					}
 
 					var subject string
@@ -144,7 +144,7 @@ func Spawner(filenames []string) {
 					log.Debug("[%s:%02d] Authenticated", name, connID)
 				}
 
-				t := Totals{ start: time.Now() }
+				t := Totals{start: time.Now()}
 
 				// Begin consuming
 				for article := range achan {
