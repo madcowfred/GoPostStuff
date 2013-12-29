@@ -3,6 +3,11 @@ GoPostStuff
 
 GoPostStuff is a simple client for posting binaries to Usenet.
 
+Features
+--------
+* Multiple server support with multiple connections per server.
+* Somewhat efficient
+
 Requirements
 ------------
 * Working [Go installation] [1]
@@ -12,18 +17,18 @@ Requirements
 
 Installation
 ------------
-#. Get the source: ``git clone git://github.com/madcowfred/GoPostStuff.git``.
+1. Get the source: ``git clone git://github.com/madcowfred/GoPostStuff.git``.
 
-#. We'll be lazy and build the app in the current directory:
+2. We'll be lazy and build the app in the current directory:
    ``export GOPATH=`pwd```
    ``go get``
    ``go build``
 
-#. Copy it to a bin directory somewhere:
+3. Copy it to a bin directory somewhere:
    ``cp gopoststuff ~/bin``
    ``sudo cp gopoststuff /usr/local/bin``
 
-#. Copy sample.conf to ~/.gopoststuff.conf and edit the options as appropriate.
+4. Copy sample.conf to ~/.gopoststuff.conf and edit the options as appropriate.
    ``cp sample.conf ~/.gopoststuff.conf``
    ``vim ~/.gopoststuff.conf``
 
