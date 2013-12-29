@@ -24,7 +24,7 @@ var Config struct {
 	Global struct {
 		From         string
 		DefaultGroup string
-		ArticleSize  int32
+		ArticleSize  int64
 	}
 
 	Server map[string]*struct {
@@ -111,5 +111,5 @@ func main() {
 	// 	log.Fatal(err)
 	// }
 
-	Spawner()
+	Spawner(flag.Args())
 }

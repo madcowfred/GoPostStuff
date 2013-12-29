@@ -14,10 +14,16 @@ type mmapData struct {
 	sync.Mutex
 }
 
-func (md *mmapData) Decrement() {
+func (md *mmapData) Decrement() bool {
 	md.Lock()
+	defer md.Unlock()
+
 	md.count--
-	md.Unlock()
+	if md.count == 0 {
+		return true
+	} else {
+		return false
+	}
 }
 
 type mmapCache struct {

@@ -13,23 +13,29 @@ type Article struct {
 }
 
 type ArticleData struct {
-	PartNum   int
-	PartTotal int
-	PartSize  uint32
-	PartBegin uint32
-	PartEnd   uint32
-	FileSize  uint32
+	PartNum   int64
+	PartTotal int64
+	PartSize  int64
+	PartBegin int64
+	PartEnd   int64
+	FileNum   int
+	FileTotal int
+	FileSize  int64
 	FileName  string
 }
 
-func NewArticle(p []byte, data *ArticleData) *Article {
-	a := &Article{}
-	a.Headers["From"] = Config.Global.From
-	a.Headers["Newsgroups"] = Config.Global.DefaultGroup
-	// FIXME
-	a.Headers["Subject"] = "aaa"
+func NewArticle(p []byte, data *ArticleData, subject string) *Article {
+
+	headers := make(map[string]string)
+
+	headers["From"] = Config.Global.From
+	headers["Newsgroups"] = Config.Global.DefaultGroup
 	// art.headers['Message-ID'] = '<%.5f.%d@%s>' % (time.time(), partnum, self.conf['server']['hostname'])
-	a.Headers["X-Newsposter"] = "gopoststuff alpha - https://github.com/madcowfred/gopoststuff"
+	headers["X-Newsposter"] = "gopoststuff alpha - https://github.com/madcowfred/gopoststuff"
+
+	// Build subject
+	// spec: c1 [fnum/ftotal] - "filename" yEnc (pnum/ptotal)
+	headers["Subject"] = fmt.Sprintf("%s [%d/%d] - \"%s\" yEnc (%d/%d)", subject, data.FileNum, data.FileTotal, data.FileName, data.PartNum, data.PartTotal)
 
 	buf := new(bytes.Buffer)
 	// yEnc begin line
@@ -43,7 +49,5 @@ func NewArticle(p []byte, data *ArticleData) *Article {
 	h.Write(p)
 	buf.WriteString(fmt.Sprintf("=yend size=%d part=%d pcrc32=%08X\r\n", data.PartSize, data.PartNum, h.Sum32()))
 
-	a.Body = buf.Bytes()
-
-	return a
+	return &Article{Headers: headers, Body: buf.Bytes()}
 }
