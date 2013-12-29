@@ -136,6 +136,32 @@ func (c *Conn) Authenticate(username, password string) error {
 	return err
 }
 
+// Post posts an article
+func (c *Conn) Post(p []byte) error {
+	if _, _, err := c.cmd(3, "POST"); err != nil {
+		return err
+	}
+
+	start := 0
+	end := len(p)
+	for {
+		n, err := c.conn.Write(p[start:end])
+		if err != nil {
+			return err
+		}
+
+		start += n
+		if start == end {
+			break
+		}
+	}
+
+	if _, _, err := c.cmd(240, "."); err != nil {
+		return err
+	}
+	return nil
+}
+
 // Quit sends the QUIT command and closes the connection to the server.
 func (c *Conn) Quit() error {
 	_, _, err := c.cmd(0, "QUIT")
