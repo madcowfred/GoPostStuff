@@ -1,36 +1,46 @@
 GoPostStuff
 ===========
 
-GoPostStuff is a simple client for posting binaries to Usenet.
+GoPostStuff is a simple client for posting binaries to Usenet. It's pretty much an
+attempt at a modernised version of [newsmangler] [1].
+
+  [1]: https://github.com/madcowfred/newsmangler/ "newsmangler"
 
 Features
 --------
 * Multiple server support with multiple connections per server.
-* Somewhat efficient
+* Encrypted connection support if you like that sort of thing.
+* Maxes a 100Mbit connection with relatively light CPU usage (encrypted connections will
+    use around twice as much CPU).
 
 Requirements
 ------------
-* Working [Go installation] [1]
-* Usenet server to use
+* A working [Go installation] [2]
+* A Usenet server that allows posting
 
-  [1]: http://golang.org/doc/install  "Getting Started - The Go Programming Language"
+  [2]: http://golang.org/doc/install  "Getting Started - The Go Programming Language"
 
 Installation
 ------------
-1. Get the source: ``git clone git://github.com/madcowfred/GoPostStuff.git``.
+1.  Get the source:
+
+        git clone git://github.com/madcowfred/GoPostStuff.git
 
 2. We'll be lazy and build the app in the current directory:
-   ``export GOPATH=\`pwd\```
-   ``go get``
-   ``go build``
 
-3. Copy it to a bin directory somewhere.
-   ``cp gopoststuff ~/bin``.
-   ``sudo cp gopoststuff /usr/local/bin``.
+        export GOPATH=`pwd`
+        go get
+        go build
+
+3. Copy the binary to a bin directory somewhere:
+
+        cp gopoststuff ~/bin
+        sudo cp gopoststuff /usr/local/bin
 
 4. Copy sample.conf to ~/.gopoststuff.conf and edit the options as appropriate.
-   ``cp sample.conf ~/.gopoststuff.conf``
-   ``vim ~/.gopoststuff.conf``
+
+        cp sample.conf ~/.gopoststuff.conf
+        vim ~/.gopoststuff.conf
 
 Usage
 -----
