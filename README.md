@@ -10,8 +10,8 @@ Features
 --------
 * Multiple server support with multiple connections per server.
 * Encrypted connection support if you like that sort of thing.
-* Maxes a 100Mbit connection with relatively light CPU usage (encrypted connections will
-    use around twice as much CPU).
+* Maxes a 100Mbit connection with relatively light CPU usage - encrypted connections will
+    use around twice as much CPU (~18% vs ~40% of a single core on my test machine).
 
 Requirements
 ------------
