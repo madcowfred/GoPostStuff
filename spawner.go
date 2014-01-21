@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/madcowfred/gopoststuff/simplenntp"
+	"github.com/madcowfred/simplenntp"
 	"os"
 	"path/filepath"
 	"sync"

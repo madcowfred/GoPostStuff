@@ -34,6 +34,7 @@ var Config struct {
 		Password    string
 		Connections int
 		TLS         bool
+		//MessageIDHost string
 	}
 }
 
@@ -95,21 +96,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// Find some files
-
-	// mc := NewMmapCache()
-	// md, err := mc.MapFile("gopoststuff.go", 1)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-
-	// log.Info("%s", md.data[0:4])
-
-	// md.Decrement()
-	// err = mc.CloseFile("gopoststuff.go")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-
+	// Start the magical spawner
 	Spawner(flag.Args())
 }
