@@ -22,25 +22,22 @@ Requirements
 
 Installation
 ------------
-1.  Get the source:
+1. Initalise a directory to store Go files:
 
-        git clone git://github.com/madcowfred/GoPostStuff.git
+        mkdir ~/go
+        export GOPATH="~/go"
 
-2. We'll be lazy and build the app in the current directory:
+1.  Get and install GoPostStuff - this will make a ~/go/bin/GoPostStuff binary:
 
-        export GOPATH=`pwd`
-        go get
-        go build
+        go get github.com/madcowfred/GoPostStuff
+        go install github.com/madcowfred/GoPostStuff
 
-3. Copy the binary to a bin directory somewhere:
-
-        cp gopoststuff ~/bin
-        sudo cp gopoststuff /usr/local/bin
-
-4. Copy sample.conf to ~/.gopoststuff.conf and edit the options as appropriate.
+3. Copy sample.conf to ~/.gopoststuff.conf and edit the options as appropriate.
 
         cp sample.conf ~/.gopoststuff.conf
         vim ~/.gopoststuff.conf
+
+4. Run GoPostStuff!
 
 Usage
 -----
