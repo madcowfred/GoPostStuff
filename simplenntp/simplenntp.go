@@ -126,21 +126,24 @@ func (c *Conn) Authenticate(username, password string) error {
 }
 
 // Post posts an article
-func (c *Conn) Post(p []byte) error {
+func (c *Conn) Post(p []byte, chunkSize int64) error {
 	if _, _, err := c.cmd(3, "POST"); err != nil {
 		return err
 	}
 
-	start := 0
-	end := len(p)
+	plen := int64(len(p))
+	start := int64(0)
+	end := minInt(plen, chunkSize)
+
 	for {
 		n, err := c.conn.Write(p[start:end])
 		if err != nil {
 			return err
 		}
 
-		start += n
-		if start == end {
+		start += int64(n)
+		end = minInt(plen, start + chunkSize)
+		if start == plen {
 			break
 		}
 	}
@@ -157,4 +160,11 @@ func (c *Conn) Quit() error {
 	c.conn.Close()
 	c.close = true
 	return err
+}
+
+func minInt(a, b int64) int64 {
+	if (a < b) {
+		return a
+	}
+	return b
 }

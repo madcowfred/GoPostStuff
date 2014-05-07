@@ -29,8 +29,9 @@ var Config struct {
 	Global struct {
 		From         string
 		DefaultGroup string
-		ArticleSize  int64
 		SubjectPrefix string
+		ArticleSize  int64
+		ChunkSize    int64
 	}
 
 	Server map[string]*struct {
@@ -100,6 +101,11 @@ func main() {
 	err := gcfg.ReadFileInto(&Config, cfgFile)
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	// Fix default values
+	if (Config.Global.ChunkSize == 0) {
+		Config.Global.ChunkSize = 10240
 	}
 
 	// Start the magical spawner

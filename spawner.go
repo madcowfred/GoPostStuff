@@ -151,7 +151,7 @@ func Spawner(filenames []string) {
 				// Begin consuming
 				for article := range achan {
 					log.Debug("[%s:%02d] Article: %p", name, connID, article)
-					err := conn.Post(article.Body)
+					err := conn.Post(article.Body, Config.Global.ChunkSize)
 					if err != nil {
 						log.Warning("[%s:%02d] Post error: %s", name, connID, err)
 					}
