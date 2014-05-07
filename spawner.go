@@ -130,7 +130,7 @@ func Spawner(filenames []string) {
 				log.Debug("[%s:%02d] Connecting...", name, connID)
 				conn, err := simplenntp.Dial(server.Address, server.Port, server.TLS)
 				if err != nil {
-					log.Critical("[%s] Error while connecting: %s", name, err)
+					log.Fatalf("[%s] Error while connecting: %s", name, err)
 				}
 				log.Debug("[%s:%02d] Connected", name, connID)
 
