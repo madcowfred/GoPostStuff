@@ -38,7 +38,7 @@ var Config struct {
 		Password    string
 		Connections int
 		TLS         bool
-		InsecureSSL	bool
+		InsecureSSL bool
 		//MessageIDHost string
 	}
 }
