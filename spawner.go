@@ -144,6 +144,8 @@ func Spawner(filenames []string) {
 					log.Debug("[%s:%02d] Authenticated", name, connID)
 				}
 
+				log.Info("[%s:%02d] Ready", name, connID)
+
 				t := Totals{start: time.Now()}
 
 				// Begin consuming
