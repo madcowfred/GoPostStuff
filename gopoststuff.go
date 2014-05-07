@@ -29,6 +29,7 @@ var Config struct {
 		From         string
 		DefaultGroup string
 		ArticleSize  int64
+		SubjectPrefix string
 	}
 
 	Server map[string]*struct {
@@ -39,7 +40,6 @@ var Config struct {
 		Connections int
 		TLS         bool
 		InsecureSSL bool
-		//MessageIDHost string
 	}
 }
 

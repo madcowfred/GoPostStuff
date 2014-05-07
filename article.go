@@ -35,7 +35,13 @@ func NewArticle(p []byte, data *ArticleData, subject string) *Article {
 
 	// Build subject
 	// spec: c1 [fnum/ftotal] - "filename" yEnc (pnum/ptotal)
-	buf.WriteString(fmt.Sprintf("Subject: %s [%d/%d] - \"%s\" yEnc (%d/%d)\r\n\r\n", subject, data.FileNum, data.FileTotal, data.FileName, data.PartNum, data.PartTotal))
+	var subj string
+	if (len(Config.Global.SubjectPrefix) > 0) {
+		subj = fmt.Sprintf("%s %s", Config.Global.SubjectPrefix, subject)
+	} else {
+		subj = subject
+	}
+	buf.WriteString(fmt.Sprintf("Subject: %s [%d/%d] - \"%s\" yEnc (%d/%d)\r\n\r\n", subj, data.FileNum, data.FileTotal, data.FileName, data.PartNum, data.PartTotal))
 
 	// yEnc begin line
 	buf.WriteString(fmt.Sprintf("=ybegin part=%d total=%d line=128 size=%d name=%s\r\n", data.PartNum, data.PartTotal, data.FileSize, data.FileName))
