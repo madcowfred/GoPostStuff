@@ -28,7 +28,7 @@ func NewArticle(p []byte, data *ArticleData, subject string) *Article {
 	buf := new(bytes.Buffer)
 	buf.WriteString(fmt.Sprintf("From: %s\r\n", Config.Global.From))
 
-	if (len(*groupFlag) > 0) {
+	if len(*groupFlag) > 0 {
 		buf.WriteString(fmt.Sprintf("Newsgroups: %s\r\n", *groupFlag))
 	} else {
 		buf.WriteString(fmt.Sprintf("Newsgroups: %s\r\n", Config.Global.DefaultGroup))
@@ -41,7 +41,7 @@ func NewArticle(p []byte, data *ArticleData, subject string) *Article {
 	// Build subject
 	// spec: c1 [fnum/ftotal] - "filename" yEnc (pnum/ptotal)
 	var subj string
-	if (len(Config.Global.SubjectPrefix) > 0) {
+	if len(Config.Global.SubjectPrefix) > 0 {
 		subj = fmt.Sprintf("%s %s", Config.Global.SubjectPrefix, subject)
 	} else {
 		subj = subject

@@ -27,11 +27,11 @@ var log = logging.MustGetLogger("gopoststuff")
 // Config
 var Config struct {
 	Global struct {
-		From         string
-		DefaultGroup string
+		From          string
+		DefaultGroup  string
 		SubjectPrefix string
-		ArticleSize  int64
-		ChunkSize    int64
+		ArticleSize   int64
+		ChunkSize     int64
 	}
 
 	Server map[string]*struct {
@@ -104,7 +104,7 @@ func main() {
 	}
 
 	// Fix default values
-	if (Config.Global.ChunkSize == 0) {
+	if Config.Global.ChunkSize == 0 {
 		Config.Global.ChunkSize = 10240
 	}
 

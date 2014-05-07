@@ -9,7 +9,7 @@ func StatusLogger(ticker *time.Ticker, tdchan chan *simplenntp.TimeData) {
 	var tds []*simplenntp.TimeData
 
 	for t := range ticker.C {
-		stamp := t.UnixNano() / 1e6;
+		stamp := t.UnixNano() / 1e6
 		tds = append(tds, &simplenntp.TimeData{stamp, 0})
 
 		// Fetch any new TimeData entries
@@ -18,22 +18,22 @@ func StatusLogger(ticker *time.Ticker, tdchan chan *simplenntp.TimeData) {
 			breakNow = false
 
 			select {
-				case td := <-tdchan:
-					// New item, add it to our list
-					tds = append(tds, td)
-				default:
-					// Nothing else in the channel, done for now
-					breakNow = true
+			case td := <-tdchan:
+				// New item, add it to our list
+				tds = append(tds, td)
+			default:
+				// Nothing else in the channel, done for now
+				breakNow = true
 			}
 
-			if (breakNow) {
+			if breakNow {
 				break
 			}
 		}
 
 		// Calculate current speed
 		if len(tds) > 0 {
-			active := float64(tds[len(tds) - 1].Milliseconds - tds[0].Milliseconds) / 1000
+			active := float64(tds[len(tds)-1].Milliseconds-tds[0].Milliseconds) / 1000
 			totalBytes := 0
 			for _, td := range tds {
 				totalBytes += td.Bytes

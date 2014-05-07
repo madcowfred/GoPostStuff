@@ -55,7 +55,6 @@ func Spawner(filenames []string) {
 		// Make a channel to stuff Articles into
 		achan := make(chan *Article, server.Connections)
 
-
 		// Make a channel to stuff Totals into
 		tchan := make(chan *Totals, server.Connections)
 
