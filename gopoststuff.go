@@ -17,6 +17,7 @@ const (
 // Command ling flags
 var verboseFlag = flag.Bool("v", false, "Show verbose debug information")
 var configFlag = flag.String("c", "", "Use alternative config file")
+var groupFlag = flag.String("g", "", "Newsgroup(s) to post to - separate multiple with a comma \",\"")
 var subjectFlag = flag.String("s", "", "Subject to use")
 var dirSubjectFlag = flag.Bool("d", false, "Use directory names as subjects")
 
