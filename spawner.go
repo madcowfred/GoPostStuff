@@ -37,16 +37,9 @@ func Spawner(filenames []string) {
 			log.Fatalf("Spawner walk error: %s", err)
 		}
 	}
-	for _, fd := range files {
-		log.Debug("%+v", fd)
-	}
 
 	// Make a channel to stuff TimeDatas into
 	tdchan := make(chan *simplenntp.TimeData, 100000)
-
-	// Start our weird status goroutine
-	statusTicker := time.NewTicker(time.Second * 1)
-	go StatusLogger(statusTicker, tdchan)
 
 	// Iterate over configured servers
 	for name, server := range Config.Server {
@@ -181,6 +174,10 @@ func Spawner(filenames []string) {
 			}(achan, tchan)
 		}
 	}
+
+	// Start our weird status goroutine
+	statusTicker := time.NewTicker(time.Second * 1)
+	go StatusLogger(statusTicker, tdchan)
 
 	// Wait for all connections to complete
 	wg.Wait()

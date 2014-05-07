@@ -140,7 +140,7 @@ func (c *Conn) Post(p []byte, chunkSize int64) error {
 
 	plen := int64(len(p))
 	start := int64(0)
-	end := minInt(plen, chunkSize)
+	end := min(plen, chunkSize)
 
 	for {
 		n, err := c.conn.Write(p[start:end])
@@ -156,7 +156,7 @@ func (c *Conn) Post(p []byte, chunkSize int64) error {
 
 		// Calculate the next indexes
 		start += int64(n)
-		end = minInt(plen, start + chunkSize)
+		end = min(plen, start + chunkSize)
 		if start == plen {
 			break
 		}
@@ -176,7 +176,7 @@ func (c *Conn) Quit() error {
 	return err
 }
 
-func minInt(a, b int64) int64 {
+func min(a, b int64) int64 {
 	if (a < b) {
 		return a
 	}
