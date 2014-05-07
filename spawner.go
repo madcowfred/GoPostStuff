@@ -55,6 +55,7 @@ func Spawner(filenames []string) {
 		// Make a channel to stuff Articles into
 		achan := make(chan *Article, server.Connections)
 
+
 		// Make a channel to stuff Totals into
 		tchan := make(chan *Totals, server.Connections)
 
@@ -68,7 +69,6 @@ func Spawner(filenames []string) {
 			mc := NewMmapCache()
 
 			for filenum, fd := range files {
-				log.Debug("fd: %+v", fd)
 				// Open and mmap the file
 				md, err := mc.MapFile(fd.path, len(Config.Server))
 				if err != nil {
@@ -158,7 +158,6 @@ func Spawner(filenames []string) {
 
 				// Begin consuming
 				for article := range achan {
-					log.Debug("[%s:%02d] Article: %p", name, connID, article)
 					err := conn.Post(article.Body, Config.Global.ChunkSize)
 					if err != nil {
 						log.Warning("[%s:%02d] Post error: %s", name, connID, err)
