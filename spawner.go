@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/madcowfred/simplenntp"
+	"github.com/madcowfred/gopoststuff/simplenntp"
 	"os"
 	"path/filepath"
 	"sync"
@@ -128,7 +128,7 @@ func Spawner(filenames []string) {
 
 				// Connect
 				log.Debug("[%s:%02d] Connecting...", name, connID)
-				conn, err := simplenntp.Dial(server.Address, server.Port, server.TLS)
+				conn, err := simplenntp.Dial(server.Address, server.Port, server.TLS, server.InsecureSSL)
 				if err != nil {
 					log.Fatalf("[%s] Error while connecting: %s", name, err)
 				}
