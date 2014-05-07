@@ -120,7 +120,7 @@ func Spawner(filenames []string) {
 		for i := 0; i < server.Connections; i++ {
 			connID := i + 1
 
-			// Increment the WaitGroup counter
+			// Increment the WaitGroup counters
 			wg.Add(1)
 			go func(achan chan *Article, tchan chan *Totals) {
 				// Decrement the counter when the goroutine completes
@@ -161,9 +161,9 @@ func Spawner(filenames []string) {
 				t.end = time.Now()
 				tchan <- &t
 
-				dur := t.end.Sub(t.start)
-				speed := float64(t.bytes) / dur.Seconds() / 1024
-				log.Info("[%s:%02d] Posted %d bytes in %s at %.1fKB/s", name, connID, t.bytes, dur.String(), speed)
+				// dur := t.end.Sub(t.start)
+				// speed := float64(t.bytes) / dur.Seconds() / 1024
+				// log.Info("[%s:%02d] Posted %d bytes in %s at %.1fKB/s", name, connID, t.bytes, dur.String(), speed)
 
 				// Close the connection
 				log.Debug("[%s:%02d] Closing connection", name, connID)
@@ -172,7 +172,34 @@ func Spawner(filenames []string) {
 					log.Warning("[%s:%02d] Error while closing connection: %s", name, connID, err)
 				}
 			}(achan, tchan)
+
 		}
+
+		// Start a goroutine to print some stats when done, sigh
+		wg.Add(1)
+		go func(tchan chan *Totals) {
+			defer wg.Done()
+
+			minStart := time.Now()
+			var maxEnd time.Time
+			var totalBytes int64
+
+			for i := 0; i < server.Connections; i++ {
+				t := <-tchan
+				if t.start.Before(minStart) {
+					minStart = t.start
+				}
+				if t.end.After(maxEnd) {
+					maxEnd = t.end
+				}
+				totalBytes += t.bytes
+			}
+
+			dur := maxEnd.Sub(minStart)
+			speedKB := float64(totalBytes) / dur.Seconds() / 1024
+			totalMB := float64(totalBytes) / 1024 / 1024
+			log.Info("[%s] Posted %.1fMiB in %s at %.1fKB/s", name, totalMB, dur.String(), speedKB)
+		}(tchan)
 	}
 
 	// Start our weird status goroutine

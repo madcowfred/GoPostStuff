@@ -36,7 +36,7 @@ func StatusLogger(ticker *time.Ticker, tdchan chan *simplenntp.TimeData) {
 
 		// Calculate current speed
 		if len(tds) > 0 {
-			active := float64(tds[len(tds)-1].Milliseconds - tds[0].Milliseconds) / 1000
+			active := float64(tds[len(tds)-1].Milliseconds-tds[0].Milliseconds) / 1000
 			totalBytes := 0
 			for _, td := range tds {
 				totalBytes += td.Bytes
