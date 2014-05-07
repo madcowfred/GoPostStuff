@@ -31,7 +31,7 @@ func NewArticle(p []byte, data *ArticleData, subject string) *Article {
 	buf.WriteString(fmt.Sprintf("Message-ID: <%d$gps@gopoststuff>\r\n", time.Now().UnixNano()))
 	// art.headers['Message-ID'] = '<%.5f.%d@%s>' % (time.time(), partnum, self.conf['server']['hostname'])
 	//headers["X-Newsposter"] = "gopoststuff alpha - https://github.com/madcowfred/gopoststuff"
-	buf.WriteString(fmt.Sprintf("X-Newsposter: gopoststuff alpha - https://github.com/madcowfred/gopoststuff\r\n"))
+	buf.WriteString(fmt.Sprintf("X-Newsposter: gopoststuff %s - https://github.com/madcowfred/gopoststuff\r\n", GPS_VERSION))
 
 	// Build subject
 	// spec: c1 [fnum/ftotal] - "filename" yEnc (pnum/ptotal)

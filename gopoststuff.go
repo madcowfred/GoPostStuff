@@ -10,6 +10,10 @@ import (
 	"github.com/op/go-logging"
 )
 
+const (
+	GPS_VERSION = "0.2.0"
+)
+
 // Command ling flags
 var verboseFlag = flag.Bool("v", false, "Show verbose debug information")
 var configFlag = flag.String("c", "", "Use alternative config file")
