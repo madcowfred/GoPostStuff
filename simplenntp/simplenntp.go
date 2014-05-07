@@ -17,6 +17,11 @@ import (
 // Connection timeout in seconds
 var timeout = time.Duration(20) * time.Second
 
+type TimeData struct {
+	Milliseconds int64
+	Bytes int
+}
+
 // A ProtocolError represents responses from an NNTP server
 // that seem incorrect for NNTP.
 type ProtocolError string
@@ -37,13 +42,15 @@ func (e Error) Error() string {
 type Conn struct {
 	conn  io.WriteCloser
 	r     *bufio.Reader
+	tdchan chan *TimeData
 	close bool
 }
 
-func newConn(c net.Conn) (res *Conn, err error) {
+func newConn(c net.Conn, tdchan chan *TimeData) (res *Conn, err error) {
 	res = &Conn{
 		conn: c,
 		r:    bufio.NewReaderSize(c, 4096),
+		tdchan: tdchan,
 	}
 
 	_, err = res.r.ReadString('\n')
@@ -55,7 +62,7 @@ func newConn(c net.Conn) (res *Conn, err error) {
 }
 
 // Dial connects to an NNTP server
-func Dial(address string, port int, useTLS bool, insecureSSL bool) (*Conn, error) {
+func Dial(address string, port int, useTLS bool, insecureSSL bool, tdchan chan *TimeData) (*Conn, error) {
 	conn, err := net.DialTimeout("tcp", fmt.Sprintf("%s:%d", address, port), timeout)
 	if err != nil {
 		return nil, err
@@ -69,9 +76,9 @@ func Dial(address string, port int, useTLS bool, insecureSSL bool) (*Conn, error
 			return nil, err
 		}
 
-		return newConn(tlsConn)
+		return newConn(tlsConn, tdchan)
 	} else {
-		return newConn(conn)
+		return newConn(conn, tdchan)
 	}
 }
 
@@ -141,6 +148,13 @@ func (c *Conn) Post(p []byte, chunkSize int64) error {
 			return err
 		}
 
+		// Write a data sent time point to our channel
+		c.tdchan <- &TimeData{
+			Milliseconds: time.Now().UnixNano() / 1e6,
+			Bytes: n,
+		}
+
+		// Calculate the next indexes
 		start += int64(n)
 		end = minInt(plen, start + chunkSize)
 		if start == plen {

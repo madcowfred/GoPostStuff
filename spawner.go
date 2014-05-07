@@ -41,11 +41,20 @@ func Spawner(filenames []string) {
 		log.Debug("%+v", fd)
 	}
 
+	// Make a channel to stuff TimeDatas into
+	tdchan := make(chan *simplenntp.TimeData, 100000)
+
+	// Start our weird status goroutine
+	statusTicker := time.NewTicker(time.Second * 1)
+	go StatusLogger(statusTicker, tdchan)
+
+	// Iterate over configured servers
 	for name, server := range Config.Server {
 		log.Info("[%s] Starting %d connections", name, server.Connections)
 
 		// Make a channel to stuff Articles into
 		achan := make(chan *Article, server.Connections)
+
 
 		// Make a channel to stuff Totals into
 		tchan := make(chan *Totals, server.Connections)
@@ -128,7 +137,7 @@ func Spawner(filenames []string) {
 
 				// Connect
 				log.Debug("[%s:%02d] Connecting...", name, connID)
-				conn, err := simplenntp.Dial(server.Address, server.Port, server.TLS, server.InsecureSSL)
+				conn, err := simplenntp.Dial(server.Address, server.Port, server.TLS, server.InsecureSSL, tdchan)
 				if err != nil {
 					log.Fatalf("[%s] Error while connecting: %s", name, err)
 				}
@@ -178,6 +187,9 @@ func Spawner(filenames []string) {
 
 	// Wait for all connections to complete
 	wg.Wait()
+
+	// Stop the status ticker
+	statusTicker.Stop()
 }
 
 func min(a, b int64) int64 {
