@@ -17,8 +17,8 @@ const (
 // Command ling flags
 var verboseFlag = flag.Bool("v", false, "Show verbose debug information")
 var configFlag = flag.String("c", "", "Use alternative config file")
-var subjectFlag = flag.String("s", "", "Subject prefix to use")
-var dirSubjectFlag = flag.Bool("d", false, "Use directory names as subject prefixes")
+var subjectFlag = flag.String("s", "", "Subject to use")
+var dirSubjectFlag = flag.Bool("d", false, "Use directory names as subjects")
 
 // Logger
 var log = logging.MustGetLogger("gopoststuff")
