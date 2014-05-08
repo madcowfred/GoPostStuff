@@ -144,9 +144,7 @@ func Spawner(filenames []string) {
 					log.Debug("[%s:%02d] Authenticated", name, connID)
 				}
 
-				log.Info("[%s:%02d] Ready", name, connID)
-
-				t := Totals{start: time.Now()}
+				t := &Totals{start: time.Now()}
 
 				// Begin consuming
 				for article := range achan {
@@ -160,7 +158,7 @@ func Spawner(filenames []string) {
 
 				// Stick our totals struct into the channel
 				t.end = time.Now()
-				tchan <- &t
+				tchan <- t
 
 				// Close the connection
 				log.Debug("[%s:%02d] Closing connection", name, connID)
