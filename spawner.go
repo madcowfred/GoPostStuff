@@ -38,6 +38,14 @@ func Spawner(filenames []string) {
 		}
 	}
 
+	// Log a message about what we're posting
+	var totalBytes int64
+	for _, fd := range files {
+		totalBytes += int64(fd.size)
+	}
+	totalMB := float64(totalBytes) / 1024 / 1024
+	log.Info("Found %d file(s) totalling %.1fMiB", len(files), totalMB)
+
 	// Make a channel to stuff TimeDatas into
 	tdchan := make(chan *simplenntp.TimeData, 100000)
 
