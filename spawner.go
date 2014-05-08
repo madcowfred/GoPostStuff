@@ -158,12 +158,9 @@ func Spawner(filenames []string) {
 					t.bytes += int64(len(article.Body))
 				}
 
+				// Stick our totals struct into the channel
 				t.end = time.Now()
 				tchan <- &t
-
-				// dur := t.end.Sub(t.start)
-				// speed := float64(t.bytes) / dur.Seconds() / 1024
-				// log.Info("[%s:%02d] Posted %d bytes in %s at %.1fKB/s", name, connID, t.bytes, dur.String(), speed)
 
 				// Close the connection
 				log.Debug("[%s:%02d] Closing connection", name, connID)
@@ -172,7 +169,6 @@ func Spawner(filenames []string) {
 					log.Warning("[%s:%02d] Error while closing connection: %s", name, connID, err)
 				}
 			}(achan, tchan)
-
 		}
 
 		// Start a goroutine to print some stats when done, sigh
@@ -195,6 +191,7 @@ func Spawner(filenames []string) {
 				totalBytes += t.bytes
 			}
 
+			// Calculate and log the result
 			dur := maxEnd.Sub(minStart)
 			speedKB := float64(totalBytes) / dur.Seconds() / 1024
 			totalMB := float64(totalBytes) / 1024 / 1024
@@ -213,6 +210,7 @@ func Spawner(filenames []string) {
 	statusTicker.Stop()
 }
 
+// math.Min wants float64s, zzz
 func min(a, b int64) int64 {
 	if a < b {
 		return a
