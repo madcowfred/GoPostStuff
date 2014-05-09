@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	GPS_VERSION = "0.2.0-git"
+	GPS_VERSION = "0.2.0-release"
 )
 
 // Command ling flags

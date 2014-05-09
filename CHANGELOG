@@ -1,0 +1,17 @@
+0.2.0
+-----
+* Decided on the MIT License, exciting.
+* Added a log message for what we'll be posting: "INFO      Found 1 file(s) totalling 1.0MiB".
+* Added a status line while posting, updated once per second: "Posted 0.2MiB - Current speed: 30.3KiB/s".
+* Added a total posted/speed value for each server once it finishes posting, not sure why it has so many decimal
+  places: "INFO      [test] Posted 484.6MiB in 24.392107862s at 20342.0KB/s".
+* Added global/SubjectPrefix config option: a string that is prefixed to every subject line (GH-5).
+* Added global/ChunkSize config option: how much data (in bytes) to write to the socket at a time. The default of 10KB
+  seems fine for saturating 250Mbit.
+* Added server/InsecureSSL config option: connection will succeed even if there are SSL errors such as self-signed
+  certificates (GH-7).
+* Added a "-g group" command line option to override the config default newsgroups.
+* Added the GoPostStuff version number to the X-Newsposter header of each article, this should help a lot with tracking
+  down any post mangling issues.
+* Fixed some inaccurate command line option help text.
+* Fixed a crash when connecting to a server with SSL errors, GoPostStuff will now quit cleanly instead.
