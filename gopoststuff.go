@@ -5,8 +5,8 @@ import (
 	"os"
 	"os/user"
 	"path/filepath"
+	"runtime"
 	"runtime/pprof"
-	//"fmt"
 	"code.google.com/p/gcfg"
 	"github.com/op/go-logging"
 )
@@ -22,6 +22,7 @@ var groupFlag = flag.String("g", "", "Newsgroup(s) to post to - separate multipl
 var subjectFlag = flag.String("s", "", "Subject to use")
 var verboseFlag = flag.Bool("v", false, "Show verbose debug information")
 var cpuProfileFlag = flag.String("cpuprofile", "", "Write CPU profiling information to FILE")
+var allCpuFlag = flag.Bool("allcpus", false, "Use all CPUs for stuff [ALPHA]")
 
 // Logger
 var log = logging.MustGetLogger("gopoststuff")
@@ -110,6 +111,12 @@ func main() {
 		Config.Global.ChunkSize = 10240
 	}
 
+	// Maybe set GOMAXPROCS
+	if *allCpuFlag {
+		runtime.GOMAXPROCS(runtime.NumCPU())
+	}
+	log.Info("Using %d/%d CPUs", runtime.GOMAXPROCS(0), runtime.NumCPU())
+
 	// Set up CPU profiling
 	if *cpuProfileFlag != "" {
 		f, err := os.Create(*cpuProfileFlag)
@@ -123,4 +130,8 @@ func main() {
 
 	// Start the magical spawner
 	Spawner(flag.Args())
+
+	if *cpuProfileFlag != "" {
+		log.Info("CPU profiling data saved to %s", *cpuProfileFlag)
+	}
 }
