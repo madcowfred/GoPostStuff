@@ -1,17 +1,18 @@
 GoPostStuff
 ===========
 
-GoPostStuff is a simple client for posting binaries to Usenet. It's pretty much an
-attempt at a modernised version of [newsmangler] [1].
+GoPostStuff is a simple client for posting binaries to Usenet, written in Go. If you've 
+seen/used [newsmangler] [1], imagine that but faster (and maybe better one day).
 
   [1]: https://github.com/madcowfred/newsmangler/ "newsmangler"
 
 Features
 --------
 * Multiple server support with multiple connections per server.
-* Encrypted connection support if you like that sort of thing.
-* Maxes a 100Mbit connection with relatively light CPU usage - encrypted connections will
-    use around twice as much CPU (~18% vs ~40% of a single core on my test machine).
+* Native TLS support so you don't need to use stunnel or equivalent frippery.
+* Fast: a basic Linode VPS can push *250Mbit* of TLS-encrypted data while using 50-60%
+  of a single CPU (Intel(R) Xeon(R) CPU E5-2680 v2 @ 2.80GHz).
+
 
 Requirements
 ------------
@@ -42,11 +43,12 @@ Installation
 Usage
 -----
 
-``gopoststuff [-c "CONFIG"] [-d] [-s "SUBJECT"] [-v] file1 file2 ... fileN``
+``gopoststuff [-c "CONFIG"] [-d] [-g "GROUP"] [-s "SUBJECT"] [-v] file1 file2 ... fileN``
 
 * -c "CONFIG": Use an alternate configuration file.
 * -d: Use directory posting mode. Each fileN argument _must_ be a directory. All files in each
   directory will be posted using the _directory name_ as the subject.
+* -g "GROUP": Post to GROUP instead of the global/DefaultGroup config option.
 * -s "SUBJECT": Use subject posting mode. All files will be posted using SUBJECT as the subject.
   Directories supplied as arguments are always recursed into.
 * -v: Verbose mode. This will spam a lot of extra debug information.
