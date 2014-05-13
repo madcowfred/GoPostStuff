@@ -5,21 +5,23 @@ import (
 	"os"
 	"os/user"
 	"path/filepath"
+	"runtime/pprof"
 	//"fmt"
 	"code.google.com/p/gcfg"
 	"github.com/op/go-logging"
 )
 
 const (
-	GPS_VERSION = "0.2.0-release"
+	GPS_VERSION = "0.3.0-git"
 )
 
 // Command ling flags
-var verboseFlag = flag.Bool("v", false, "Show verbose debug information")
 var configFlag = flag.String("c", "", "Use alternative config file")
+var dirSubjectFlag = flag.Bool("d", false, "Use directory names as subjects")
 var groupFlag = flag.String("g", "", "Newsgroup(s) to post to - separate multiple with a comma \",\"")
 var subjectFlag = flag.String("s", "", "Subject to use")
-var dirSubjectFlag = flag.Bool("d", false, "Use directory names as subjects")
+var verboseFlag = flag.Bool("v", false, "Show verbose debug information")
+var cpuProfileFlag = flag.String("cpuprofile", "", "Write CPU profiling information to FILE")
 
 // Logger
 var log = logging.MustGetLogger("gopoststuff")
@@ -106,6 +108,17 @@ func main() {
 	// Fix default values
 	if Config.Global.ChunkSize == 0 {
 		Config.Global.ChunkSize = 10240
+	}
+
+	// Set up CPU profiling
+	if *cpuProfileFlag != "" {
+		f, err := os.Create(*cpuProfileFlag)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		pprof.StartCPUProfile(f)
+		defer pprof.StopCPUProfile()
 	}
 
 	// Start the magical spawner
