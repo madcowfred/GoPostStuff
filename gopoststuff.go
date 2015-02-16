@@ -1,14 +1,15 @@
 package main
 
 import (
+	"code.google.com/p/gcfg"
 	"flag"
+	"fmt"
+	"github.com/op/go-logging"
 	"os"
 	"os/user"
 	"path/filepath"
 	"runtime"
 	"runtime/pprof"
-	"code.google.com/p/gcfg"
-	"github.com/op/go-logging"
 )
 
 const (
@@ -21,6 +22,7 @@ var dirSubjectFlag = flag.Bool("d", false, "Use directory names as subjects")
 var groupFlag = flag.String("g", "", "Newsgroup(s) to post to - separate multiple with a comma \",\"")
 var subjectFlag = flag.String("s", "", "Subject to use")
 var verboseFlag = flag.Bool("v", false, "Show verbose debug information")
+var versionFlag = flag.Bool("version", false, "Show version information")
 var cpuProfileFlag = flag.String("cpuprofile", "", "Write CPU profiling information to FILE")
 var allCpuFlag = flag.Bool("allcpus", false, "Use all CPUs for stuff [ALPHA]")
 
@@ -52,6 +54,12 @@ func main() {
 	// Parse command line flags
 	flag.Parse()
 
+	// Just want to know version
+	if *versionFlag {
+		fmt.Println("gopoststuff", GPS_VERSION)
+		os.Exit(0)
+	}
+
 	// Set up logging
 	var format = logging.MustStringFormatter(" %{level: -8s}  %{message}")
 	logging.SetFormatter(format)
@@ -61,7 +69,7 @@ func main() {
 		logging.SetLevel(logging.INFO, "gopoststuff")
 	}
 
-	log.Info("gopoststuff starting...")
+	log.Info("gopoststuff %s starting...", GPS_VERSION)
 
 	// Make sure -d or -s was specified
 	if len(*subjectFlag) == 0 && !*dirSubjectFlag {
